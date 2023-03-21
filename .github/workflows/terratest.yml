@@ -1,0 +1,46 @@
+---
+name: Terratest
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  AWS_REGION: eu-west-1
+  AWS_TERRAFORM_ROLE: ${{ secrets.AWS_TERRAFORM_ROLE_FOR_TERRATEST }}
+
+permissions:
+  contents: read        # Required for git checkout
+  id-token: write       # Required for OIDC with AWS
+
+jobs:
+  go-tests:
+    name: Run Go Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git clone the repository
+        uses: actions/checkout@v3
+      - name: Install Go
+        uses: actions/setup-go@v1
+        with:
+          go-version: 1.20
+      - name: Install terraform (latest)
+        uses: dflook/terraform-version@3d9d11efa42f50bbbc656ccd5c59763ab33711d4  #v1.34.0
+      - name: Download Go Modules
+        run: go mod download
+        working-directory: test
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: ${{ env.AWS_TERRAFORM_ROLE }}
+          role-session-name: github-actions
+          aws-region: ${{ env.AWS_REGION }}
+          role-duration-seconds: 900 # 15 min
+      - name: Disable all prevent_destroy so terratest can teardown after the tests
+        run: |
+          find -name "*.tf" -exec \
+            sed -i -E 's/prevent_destroy *= *true/prevent_destroy = false/g' {} \;
+      - name: Run Go Tests
+        run: go test -v -tags=unit
+        working-directory: test
