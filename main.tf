@@ -5,7 +5,7 @@ resource "aws_s3_bucket" "this" {
   tags = var.tags
 
   lifecycle {
-    prevent_destroy = true
+    #    prevent_destroy = true
   }
 }
 
@@ -88,6 +88,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "this" {
 
       expiration {
         expired_object_delete_marker = try(rule.value.expiration.expired_object_delete_marker, null)
+        days                         = try(rule.value.expiration.days, null)
       }
 
       abort_incomplete_multipart_upload {

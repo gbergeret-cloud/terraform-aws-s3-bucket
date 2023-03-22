@@ -1,6 +1,5 @@
 locals {
   lifecycle_configuration_rules = merge(
-    { for i in var.lifecycle_configuration_rules : i.id => i },
     { for i in [{
       id     = "ExpireNonCurrentVersion"
       status = "Enabled"
@@ -16,7 +15,8 @@ locals {
       noncurrent_version_expiration = {
         noncurrent_days = 30
       }
-    }] : i.id => i }
+    }] : i.id => i },
+    { for i in var.lifecycle_configuration_rules : i.id => i }
   )
 }
 
@@ -37,15 +37,12 @@ variable "lifecycle_configuration_rules" {
     id      = string
 
     abort_incomplete_multipart_upload = object({
-      day_after_initiation = number
+      days_after_initiation = number
     })
 
-    filter_and = any
     expiration = any
-    transition = list(any)
 
     noncurrent_version_expiration = any
-    noncurrent_version_transition = list(any)
   }))
   description = "A list of lifecycle rules."
   default     = []
