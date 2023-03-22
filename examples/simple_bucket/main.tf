@@ -6,6 +6,10 @@ module "aws_s3_bucket" {
   source = "../.."
 
   bucket = "simple-bucket-${random_id.bucket_suffix.hex}"
+
+  tags = {
+    Name = "simple-bucket"
+  }
 }
 
 output "bucket" {
