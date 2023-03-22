@@ -4,9 +4,9 @@ This module creates an S3 bucket with versioning, lifecycles, encryption and a
 default policy.
 
 ## Basic
-* Keep old versions for 30 days (`id: ExpireNonCurrentVersion`)
-* Encrypt object using AES:256
-* Prevent deleting object versions (`Sid: DenyDeleteObjectVersion`)
+* Prevent bucket from being publicly accessible
+* Enable default bucket encryption using `AES256`
+* Prevent unencrypted object push (`DenyPutObjectWithoutEncryption`)
 
 ## Usage
 
@@ -34,7 +34,6 @@ module "aws_s3_bucket" {
 |------|-------------|------|---------|--------|
 | bucket | Name of the bucket. | `string` |  | yes |
 | policy | Policy to apply on the bucket. | `string` | `{}`  | no |
-| lifecycle_configuration_rules | A list of lifecycle rules. | `list(object)` | `[]` | no |
 | tags | Map of tags to assign to the bucket. | `map(string)` | `{}` | no |
 
 ## Outputs
@@ -47,11 +46,4 @@ module "aws_s3_bucket" {
 
 | Name | Description | Overridable |
 |------|-------------|------|
-| DenyDeleteObjectVersion | Prevent deletion of non current version | no |
 | DenyPutObjectWithoutEncryption | Block push of unencrypted object | no |
-
-## Bucket Lifecycles
-
-| Name | Description | Overridable |
-|------|-------------|------|
-| ExpireNonCurrentVersion | Expire non current version after 30 days | yes |

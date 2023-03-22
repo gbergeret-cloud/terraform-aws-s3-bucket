@@ -37,19 +37,6 @@ data "aws_iam_policy_document" "aws_s3_bucket_policy" {
   source_policy_documents = [var.policy]
 
   statement {
-    sid    = "DenyDeleteObjectVersion"
-    effect = "Deny"
-
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
-
-    actions   = ["s3:DeleteObjectVersion"]
-    resources = ["${aws_s3_bucket.this.arn}/*"]
-  }
-
-  statement {
     sid = "DenyPutObjectWithoutEncryption"
 
     principals {
@@ -73,30 +60,5 @@ resource "aws_s3_bucket_versioning" "this" {
   bucket = aws_s3_bucket.this.id
   versioning_configuration {
     status = "Enabled"
-  }
-}
-
-resource "aws_s3_bucket_lifecycle_configuration" "this" {
-  bucket = aws_s3_bucket.this.id
-
-  dynamic "rule" {
-    for_each = local.lifecycle_configuration_rules
-
-    content {
-      id     = rule.value.id
-      status = "Enabled"
-
-      expiration {
-        expired_object_delete_marker = try(rule.value.expiration.expired_object_delete_marker, null)
-      }
-
-      abort_incomplete_multipart_upload {
-        days_after_initiation = try(rule.value.abort_incomplete_multipart_upload.days_after_initiation, null)
-      }
-
-      noncurrent_version_expiration {
-        noncurrent_days = try(rule.value.noncurrent_version_expiration.noncurrent_days, null)
-      }
-    }
   }
 }

@@ -25,19 +25,6 @@ data "aws_iam_policy_document" "this" {
   }
 
   statement {
-    sid    = "DenyDeleteObjectVersion" # Attempt to override module policy
-    effect = "Allow"                   # <-- Allow should be discarded
-
-    principals {
-      type        = "*"
-      identifiers = ["*"]
-    }
-
-    actions   = ["s3:DeleteObjectVersion"]
-    resources = ["${module.aws_s3_bucket.this.arn}/*"]
-  }
-
-  statement {
     sid = "DenyPutObjectWithoutEncryption" # Attempt to override module policy
 
     principals {
