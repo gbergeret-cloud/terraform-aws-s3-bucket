@@ -1,0 +1,29 @@
+---
+name: Terraform
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read        # Required for git checkout
+
+jobs:
+  terraform-fmt:
+    name: Run terraform-fmt
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git clone the repository
+        uses: actions/checkout@v3
+      - name: Run terraform fmt
+        uses: dflook/terraform-fmt@ef0864bf49d7cff2b35f085846c8d24c2b9d2437  #v1.34.0
+
+  terraform-validate:
+    name: Run terraform-validate
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git clone the repository
+        uses: actions/checkout@v3
+      - name: Run terraform validate
+        uses: dflook/terraform-validate@9eafdcd69fd95a8e4775582de3a8df88978b5506  #v1.34.0
