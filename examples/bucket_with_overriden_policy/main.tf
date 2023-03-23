@@ -2,6 +2,10 @@ resource "random_id" "bucket_suffix" {
   byte_length = 8
 }
 
+data "aws_vpc" "default" {
+  default = true
+}
+
 module "aws_s3_bucket" {
   source = "../.."
 
@@ -12,16 +16,25 @@ module "aws_s3_bucket" {
 
 data "aws_iam_policy_document" "this" {
   statement {
-    sid    = "RandomNewPolicy"
-    effect = "Deny"
+    sid = "DenyObjectAccessFromOutsideVpcs"
 
     principals {
-      type        = "*"
+      type        = "AWS"
       identifiers = ["*"]
     }
 
-    actions   = ["s3:DeleteObject"]
+    effect = "Deny"
+    actions = [
+      "s3:*Object",
+      "s3:*ObjectVersion"
+    ]
     resources = ["${module.aws_s3_bucket.this.arn}/*"]
+
+    condition {
+      test     = "StringNotEquals"
+      variable = "aws:SourceVpc"
+      values   = [data.aws_vpc.default.id]
+    }
   }
 
   statement {
