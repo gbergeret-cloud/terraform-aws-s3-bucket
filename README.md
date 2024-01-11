@@ -47,3 +47,4 @@ module "aws_s3_bucket" {
 | Name | Description | Overridable |
 |------|-------------|------|
 | DenyPutObjectWithoutEncryption | Block push of unencrypted object | no |
+| OnlyAllowSSLRequests | Block unsecure access to S3 | no |

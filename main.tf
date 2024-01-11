@@ -53,6 +53,28 @@ data "aws_iam_policy_document" "aws_s3_bucket_policy" {
       values   = [true]
     }
   }
+
+  statement {
+    sid = "OnlyAllowSSLRequests"
+
+    principals {
+      type        = "*"
+      identifiers = ["*"]
+    }
+
+    effect  = "Deny"
+    actions = ["*"]
+    resources = [
+      aws_s3_bucket.this.arn,
+      "${aws_s3_bucket.this.arn}/*"
+    ]
+
+    condition {
+      test     = "Bool"
+      variable = "aws:SecureTransport"
+      values   = [false]
+    }
+  }
 }
 
 resource "aws_s3_bucket_versioning" "this" {
