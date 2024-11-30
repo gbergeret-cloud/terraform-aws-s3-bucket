@@ -1,10 +1,11 @@
 # terraform-aws-s3-bucket
 
-This module creates an S3 bucket with versioning, lifecycles, encryption and a
+This module creates an S3 bucket with versioning, mfa_delete, encryption and a
 default policy.
 
 ## Basic
 * Prevent bucket from being publicly accessible
+* Enable versioning (with MFA Delete protection)
 * Enable default bucket encryption using `AES256`
 * Prevent unencrypted object push (`DenyPutObjectWithoutEncryption`)
 
