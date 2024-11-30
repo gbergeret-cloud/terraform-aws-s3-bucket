@@ -1,0 +1,24 @@
+---
+name: checkov
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read        # Required for git checkout
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.8
+      - name: Run Checkov
+        uses: bridgecrewio/checkov-action@99bb2caf247dfd9f03cf984373bc6043d4e32ebf #v12.1347.0
+        with:
+          framework: terraform

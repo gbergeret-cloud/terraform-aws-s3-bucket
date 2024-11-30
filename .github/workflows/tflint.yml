@@ -1,0 +1,19 @@
+---
+name: TFlint
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read        # Required for git checkout
+
+jobs:
+  format-hcl:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Check linting of Terraform modules
+        uses: devops-infra/action-tflint@cb3ac7cb18e6e6dd422dd96f02a9847318d1f0e8 #v0.3
